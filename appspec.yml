@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source:  /
-    destination: /home/ec2-user/service/hotsix-prdt-01
+    destination: /home/ec2-user/service/hotsixh-prdt-01
     overwrite: yes
 
 permissions:
