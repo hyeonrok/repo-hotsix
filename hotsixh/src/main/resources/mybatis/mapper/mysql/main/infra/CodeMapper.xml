@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotsix.infra.code.CodeDao">
+<resultMap id="resultMapObj" type="com.hotsix.infra.code.CodeDto"></resultMap>
+	
+	<sql id ="selectCommon">
+        FROM code a
+        LEFT JOIN codeGroup b
+		ON a.codeGroupSeqF = b.codeGroupSeq
+        WHERE 1=1
+<!--         <if test="shUseNy != null and !shUseNy.equals('')">AND ifcgUseNy = #{shUseNy}</if> -->
+        <if test="shDelny != null and !shDelny.equals('')">AND a.codeDelNy = #{shDelny}</if>
+       
+				<choose>
+					<when test="shOptionDate == 1">AND a.codeRegDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+					<when test="shOptionDate == 2">AND a.codeModDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+				</choose>
+    
+        <choose>
+            <when test="shOption == 1">AND a.codeGroupSeqF = #{shValue}</when>
+            <when test="shOption == 2">AND a.codedSeq = #{shValue}</when>
+            <when test="shOption == 3">AND a.codeName LIKE CONCAT('%',#{shValue},'%')</when>
+            
+            
+<!--             <when test="shOption == 3">AND ifcgNameEng LIKE CONCAT('%',#{shValue},'%')</when> -->
+        </choose>
+       </sql>
+	
+	
+	<select id="selectList" resultMap="resultMapObj">
+		SELECT
+			a.codeSeq
+			,a.codeName
+			,a.codeDelNy
+			,a.codeRegDate
+			,a.codeModDate
+			,b.codeGroupName
+			,b.codeGroupSeq
+		<include refid="selectCommon" />         
+         limit #{rowNumToShow} offset #{startRnumForMysql}
+	</select>
+	
+	 <select id="selectOne" resultMap="resultMapObj">
+       SELECT
+			a.codeSeq
+			,a.codeName
+			,a.codeDelNy
+			,a.codeRegDate
+			,a.codeModDate
+			,b.codeGroupName
+			,b.codeGroupSeq
+         FROM code a
+       LEFT JOIN codeGroup b
+			ON a.codeGroupSeqF = b.codeGroupSeq
+        WHERE 1=1
+       		AND a.codeSeq = #{codeSeq}
+    </select>
+	
+	
+	<select id="selectOneCount" resultType="Integer">
+		SELECT COUNT(*)
+		<include refid="selectCommon" />
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO code(
+			codeName
+			,codeGroupSeqF
+		)VALUES(
+			#{codeName}
+			,#{codeGroupSeqF}
+	)	
+	</insert>
+	
+	<update id="update">
+    	
+    	UPDATE code
+    	set
+    	codeName = #{codeName}
+    	WHERE codeSeq = #{codeSeq}
+  
+    </update>
+    
+    <update id="uelete">
+    	
+    	UPDATE code
+    	set
+    	codeDelNy = 1
+    	WHERE 1=1 
+    		AND codeSeq = #{codeSeq}
+  
+    </update>
+   
+   <delete id="delete">
+    	DELETE FROM  code
+    	WHERE 1=1
+    		AND codeSeq = #{codeSeq}
+    </delete>
+	
+	<select id="selectListCachedCodeArrayList" resultMap="resultMapObj">
+		SELECT 
+			a.codeSeq
+			,a.codeName
+			,a.codeGroupSeqF
+		FROM
+			code a
+		WHERE 1=1
+			AND a.codeDelNy = 0
+		    
+   </select>
+	
+	
+	
+</mapper>

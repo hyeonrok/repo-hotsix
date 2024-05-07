@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotsix.infra.order.OrderDao">
+<resultMap id="resultMapObj" type="com.hotsix.infra.order.OrderDto"></resultMap>
+	
+	<sql id ="selectCommon">
+      from
+		orders a
+    left join orderProduct b on b.productSeqF = a.orderSeq
+    left join product c on c.productSeq = b.productSeqF
+    left join member d on d.memberSeq = b.orderSeqF
+	Where 1=1 
+		<!--AND d.memberTypeCd = 8-->
+<!--         <if test="shUseNy != null and !shUseNy.equals('')">AND ifcgUseNy = #{shUseNy}</if> -->
+        <if test="shDelny != null and !shDelny.equals('')">AND b.orderProductDelNy = #{shDelny}</if>
+       
+				<choose>
+					<when test="shOptionDate == 1">AND b.orderProductRegDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+					<when test="shOptionDate == 2">AND b.orderProductModDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+				</choose>
+    
+        <choose>
+            <when test="shOption == 1">AND c.productName LIKE CONCAT('%',#{shValue},'%')</when>
+            <when test="shOption == 2">AND c.productPrice LIKE CONCAT('%',#{shValue},'%')</when>
+            <when test="shOption == 3">AND d.memberName LIKE CONCAT('%',#{shValue},'%')</when>
+            
+            
+<!--             <when test="shOption == 3">AND ifcgNameEng LIKE CONCAT('%',#{shValue},'%')</when> -->
+        </choose>
+       </sql>
+	
+	
+	
+	<select id="selectList" resultMap="resultMapObj">
+	select
+		 a.orderSeq
+		, a.orderRegDate
+		, a.orderModDate
+		, b.orderProductSeq
+		, b.orderAccount
+		, c.productName
+		, c.productPrice
+		, c.productTypeCd
+		, d.memberTypeCd
+		, d.memberName
+	  <include refid="selectCommon" />         
+      limit #{rowNumToShow} offset #{startRnumForMysql}
+	</select>
+	
+	
+	
+	<select id="selectOne" resultMap="resultMapObj">
+	select
+	 	b.orderProductSeq
+		,d.memberName
+		,d.memberTypeCd
+		,c.productName
+		,c.productPrice
+		,c.productTypeCd
+		,b.orderAccount
+		,b.orderSeqF
+		,b.productSeqF
+	from
+		orderProduct b
+	left join product c
+		on c.productSeq = b.productSeqF
+	left join member d
+		on d.memberSeq = b.orderSeqF
+	where
+		b.orderProductSeq = #{orderProductSeq}
+	</select>
+	
+	<select id="selectOneCount" resultType="Integer">
+		SELECT COUNT(*)
+		<include refid="selectCommon" />
+	</select>
+	
+	
+	<insert id="insert">
+		insert into orders(
+			memberSeqF
+			
+		)values(
+			#{memberSeqF}
+			
+		)
+	</insert>
+	
+	<insert id="insertMember">
+		insert into orderProduct(
+			productSeqF
+			,orderAccount
+			,orderSeqF
+		)values(
+			#{productSeqF}
+			,#{orderAccount}
+			,#{memberSeqF}
+		)
+	</insert>
+	
+		
+	
+	
+	
+	<update id="update">
+		UPDATE orderProduct 
+		SET
+		orderAccount = #{orderAccount}
+		WHERE 
+			orderProductSeq= #{orderProductSeq}
+	</update>
+	
+	<delete id="delete">
+    	DELETE FROM  orderProduct
+    	WHERE orderProductSeq = #{orderProductSeq}
+    </delete>
+	
+	<update id="uelete">
+		UPDATE orderProduct
+    	set
+    	orderProductDelNy = 1
+    	WHERE orderProduct = #{orderProduct}
+	</update>
+	
+
+</mapper>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko"xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<div th:replace="~{adm/infra/include/head :: head}"></div>
+	</head>
+
+	<body>
+
+		<!-- Page wrapper start -->
+		<div class="page-wrapper">
+
+			<!--헤더 블록 -->
+			<header>
+				<div th:replace="~{adm/infra/include/header :: header}"></div>
+			</header>
+
+			<!-- Main container start -->
+			<div class="main-container">
+
+				<!-- nav 블록 -->
+				<nav class="sidebar-wrapper">
+					<div th:replace="~{adm/infra/include/nav :: nav}"></div>
+				</nav>
+				
+
+				<!-- Content wrapper scroll start -->
+				<div class="content-wrapper-scroll">
+
+					<!-- Main header starts -->
+					<div class="main-header d-flex align-items-center justify-content-between position-relative">
+						<div class="d-flex align-items-center justify-content-center">
+							<div class="page-icon">
+<!-- 								<i class="bi bi-window-split"></i> -->
+							</div>
+<!-- 							<div class="page-title d-none d-md-block"> -->
+<!-- 								<h5>Tables</h5> -->
+<!-- 							</div> -->
+						</div>
+						<!-- Live updates start -->
+						<ul class="updates d-flex align-items-end flex-column overflow-hidden" id="updates">
+							<li>
+								<a href="javascript:void(0)">
+									<i class="bi bi-envelope-paper text-red font-1x me-2"></i>
+									<span>12 emails from David Michaiah.</span>
+								</a>
+							</li>
+							<li>
+								<a href="javascript:void(0)">
+									<i class="bi bi-bar-chart text-blue font-1x me-2"></i>
+									<span>15 new features updated successfully.</span>
+								</a>
+							</li>
+							<li>
+								<a href="javascript:void(0)">
+									<i class="bi bi-folder-check text-yellow font-1x me-2"></i>
+									<span>The media folder is created successfully.</span>
+								</a>
+							</li>
+						</ul>
+						<!-- Live updates end -->
+					</div>
+					<!-- Main header ends -->
+
+					<!-- Content wrapper start -->
+					<div class="content-wrapper">
+
+					
+		
+						<!-- Row start -->
+						<div class="row gx-3">
+							<div class="col-sm-12 col-12">
+								<div class="card">
+									<div class="card-body">
+										<div class="card-header">
+											<div class="card-title">발주 관리</div>
+										</div>
+										<form name="formList" id="formList" method="post" autocomplete="off">
+											<input type="hidden" name="thisPage" th:value="${vo.thisPage}" default="1"/>
+<!-- 											<input type="hidden" id="rowNumToShow" name="rowNumToShow" th:value="${vo.rowNumToShow}"/>	 -->
+											<div class="row">
+											<div class="col-2 gy-2" style="padding-left: 2%;">
+												<select id="shDelny" name="shDelny" class="form-select form-select-sm">
+													<option value="" th:selected="${vo.shDelny == null}">삭제여부</option>
+													<option value="1" th:selected="${vo.shDelny == 1}">Y</option>
+													<option value="0" th:selected="${vo.shDelny == 0}">N</option>            
+												</select>
+											</div>
+											<div class="col-2 gy-2">																									
+												<select id="shOptionDate" name="shOptionDate" class="form-select form-select-sm">
+													<option value="" th:selected="${vo.shOptionDate == null}">날짜</option>
+													<option value="1" th:selected="${vo.shOptionDate == 1}">등록일</option>
+													<option value="2" th:selected="${vo.shOptionDate == 2}">수정일</option>
+												</select>													
+											</div>
+											<!-- datetimepicker data-->										
+											<div class="col-2 gy-2 ">
+												<!-- datetimepicker -->
+											<input type="text"id="shDateStart" name="shDateStart" th:value="${#strings.substring(vo.shDateStart, 0, 10)}" placeholder="시작일" class="datetimepicker form-control form-control-sm" autocomplete="off">
+											</div>              
+											<div class="col-2 gy-2">
+												<input type="text" id="shDateEnd" name="shDateEnd" th:value="${#strings.substring(vo.shDateEnd, 0, 10)}" placeholder="종료일" class="datetimepicker form-control form-control-sm" autocomplete="off">
+											</div>					
+										</div>
+										
+										<div class="row">
+											<div class="col-2 gy-2"  style="padding-left: 2%;">
+												<select id="shOption" name="shOption" class="form-select form-select-sm">
+													<option value="" th:selected="${vo.shOption == null}">검색구분</option>
+													<option value="1" th:selected="${vo.shOption == 1}">발주Seq</option>
+<!-- 													<option value="2" th:selected="${vo.shOption == 2}">코드그룹 이름</option> -->
+													<option value="2" th:selected="${vo.shOption == 2}">발주자</option>
+													<option value="3" th:selected="${vo.shOption == 3}">제품이름</option>
+												</select>
+											</div>
+											<div class="col-2 gy-2">
+												<input type="text" id="shValue" name="shValue" th:value="${vo.shValue}" onkeyup="enterkey()" placeholder="검색어" class="form-control form-control-sm">
+												<div class="invalid-feedback" id="shValueFeedback"></div>
+											</div>
+											<div class="col-2 gy-2">
+												<button type="button" id="btnSearch" class="btn btn-outline-secondary btn-sm btn_custom"><i class="bi bi-search"></i></button>
+												<button type="button" id="btnReset" class="btn btn-outline-secondary btn-sm btn_custom"><i class="bi bi-arrow-clockwise"></i></button>
+											</div>
+										</div>
+										
+										<div class="row  gx-2">
+											<div class="col gx-2">
+												<strong>Total :</strong>
+												<label class="form-label" th:text="${vo.totalRows}"></label>
+											</div>
+											<div class="col-1 gy-2" align="right">
+												<select class="form-select form-select-sm" id="rowNumToShow" name="rowNumToShow"
+												th:onchange = "javascript : goList(1)">
+													<option value="5" th:selected="${vo.rowNumToShow == 5}">5</option>
+													<option value="10" th:selected="${vo.rowNumToShow == 10}">10</option>
+													<option value="20" th:selected="${vo.rowNumToShow == 20}">20</option>
+												</select>								
+											</div>
+										</div>
+										
+										<div class="table-responsive">
+											<table class="table align-middle m-0">
+												<thead>
+													<tr>
+														<th><input type="checkbox" id="checkboxType"></th>
+														<th>Seq</th>
+														<th>상품 이름</th>
+														<th>상품 종류</th>
+														<th>상품 가격</th>
+														<th>상품 수량</th>
+														<th>멤버 이름</th>
+														<th>멤버 타입</th>
+														<th>발주 등록일</th>
+														<th>발주 수정일</th>
+														<th>발주 삭제여부</th>
+														
+													</tr>
+												</thead>
+												<tbody>
+													<tr  th:if="${#lists.isEmpty(List)}" th:each="list : ${list}">
+														<td><input type="checkbox" id="checkboxType2"></td>
+														<td th:text="${list.poProductSeq}"></td>
+														<td><a th:href="@{/placingOrderForm(poProductSeq=${list.poProductSeq})}" th:text="${list.productName}"></a></td>
+														<td th:if="${list.productTypeCd != null}" th:text="${@codeService.selectOneCachedCode(list.productTypeCd)}"class="productTypeCd align-middle"></td>
+														<td th:text="${#numbers.formatInteger(list.productPrice,1,'COMMA')}"></td>
+														<td th:unless="${list.productTypeCd != null}"class="productTypeCd align-middle"></td>
+														<td th:text="${list.poAccount}"></td>
+														<td th:text="${list.memberName}"></td>
+														<td th:if="${list.memberTypeCd != null}" th:text="${@codeService.selectOneCachedCode(list.memberTypeCd)}"class="align-middle"></td>
+														<td th:unless="${list.memberTypeCd != null}"class=" align-middle"></td>
+														<td  th:text="${#dates.format(list.poProductRegDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+														<td  th:text="${#dates.format(list.poProductModDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+														<td th:if="${list.poProductDelNy eq 1}">Y</td>
+    													<td th:unless="${list.poProductDelNy eq 1}">N</td>
+													</tr>
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="5" class="text-center">
+															
+														</td>
+													</tr>													
+												</tfoot>
+											</table>
+										</div>
+										<div class="row">
+											<div class="col gy-3">
+												<nav aria-label="Page Navigation">
+													<!-- paging s  -->				
+												<div class="container-fluid px-0 mt-2 mb-2">
+													<div class="row">
+														<div class="col">
+															<ul class="pagination justify-content-center mb-0">
+																<li th:if="${vo.startPage gt vo.pageNumToShow}" class="page-item" style="cursor: pointer;"><a class="page-link" href="javascript:goList(${vo.startPage - 1})" th:attr="onclick=|goList('${vo.startPage - 1}')|"><i class="bi bi-arrow-left"></i></a></li>
+																<li th:each="num: ${#numbers.sequence(vo.startPage, vo.endPage)}" th:classappend="${num eq vo.thisPage} ? active : ''" class="page-item" style="cursor: pointer;"><a class="page-link" th:attr="onclick=|goList('${num}')|" th:text="${num}"><!-- ${i.index} --></a></li>
+																<li th:if="${vo.endPage ne vo.totalPages}" class="page-item" style="cursor: pointer;"><a class="page-link" th:attr="onclick=|goList('${vo.endPage + 1}')|"><i class="bi bi-arrow-right"></i></a></li>
+															</ul>
+														</div>
+													</div>
+												</div>
+												<!-- paging e  -->	
+												</nav>
+											</div>
+										</div>
+									</form>
+								<div class="row">
+									<div class="col">
+													<!-- Button trigger modal -->
+										<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="background-color: red;">
+											<i class="bi bi-trash"></i>
+										</button>
+
+										<!-- Modal -->
+										<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+											aria-hidden="true">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title" id="exampleModalLabel">
+															삭제
+														</h5>
+														<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+													</div>
+													<div class="modal-body">삭제하시겠습니까?</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-primary">
+															예
+														</button>
+														<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+															아니요
+														</button>
+														
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+										<div class="col" align="Right">
+  											<button type="submit" class="btn btn-primary"><a th:href="@{/placingOrderAdd}" th:text="등록"></a></button>
+										</div>
+								</div>
+								
+								</div>
+							
+								
+											
+										
+									</div>
+								</div>
+							</div>
+							
+						<!-- Row end -->
+
+					</div>
+					<!-- Content wrapper end -->
+
+				</div>
+				<!-- Content wrapper scroll end -->
+
+				
+
+			</div>
+			<!-- Main container end -->
+
+		</div>
+		<!-- Page wrapper end -->
+
+		<!-- *************
+			************ Required JavaScript Files *************
+		************* -->
+		<!-- Required jQuery first, then Bootstrap Bundle JS -->
+		<!--<script src="/adm/template/gear/assets/js/jquery.min.js"></script> -->
+		<script src="/adm/template/gear/assets/js/bootstrap.bundle.min.js"></script>
+		<script src="/adm/template/gear/assets/js/modernizr.js"></script>
+		<script src="/adm/template/gear/assets/js/moment.js"></script>
+
+		<!-- *************
+			************ Vendor Js Files *************
+		************* -->
+
+		<!-- Overlay Scroll JS -->
+		<script src="/adm/template/gear/assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
+		<script src="/adm/template/gear/assets/vendor/overlay-scroll/custom-scrollbar.js"></script>
+
+		<!-- News ticker -->
+		<script src="/adm/template/gear/assets/vendor/newsticker/newsTicker.min.js"></script>
+		<script src="/adm/template/gear/assets/vendor/newsticker/custom-newsTicker.js"></script>
+
+		<!-- Main Js Required -->
+		<script src="/adm/template/gear/assets/js/main.js"></script>
+		
+		<!-- Data Tables -->
+		<script src="/adm/template/gear/assets/vendor/datatables/dataTables.min.js"></script>
+		
+		<script>
+		window.addEventListener('load', function() {
+			$("#shDateStart, #shDateEnd").datetimepicker({
+			timepicker:false,
+	 		format: 'Y-m-d'
+			  });
+			 });
+			let goUrlXdmList = "/placingOrderXdmList";								/* ### */
+			let goUrlXdmForm = "/placingOrderForm";								/* ### */
+			let goUrlXdmMultiUele = "/codeXdmMultiUele";			/* ### */
+			let goUrlXdmMultiDele = "/codeXdmMultiDele";			/* ### */
+			let goUrlXdmView = "/codeView";								/* ### */
+			
+			let form = document.querySelector("form[name=formList]");
+			let seq = document.querySelector("input[name=cdSeq]");		/* ### */
+			
+			document.getElementById("btnReset").onclick = function () {
+			    location.href = goUrlXdmList;
+			}
+			
+			goList = function (thisPage) {
+			    document.querySelector("input[name=thisPage]").value = thisPage;
+			    form.action = goUrlXdmList;
+			    form.submit();
+			}
+
+//	 		document.getElementById("btnForm").onclick = function () {
+//	 		    goForm(0);
+//	 		}
+
+
+	 		goForm = function (keyValue) {
+	 		    seq.value = keyValue;
+	 		    form.action = goUrlXdmForm;
+	 		    form.submit();
+	 		}
+					
+			document.getElementById("btnSearch").onclick = function () {
+			    form.action = goUrlXdmList;
+			    form.submit();
+				};
+				
+				function enterkey() {
+					if (window.event.keyCode == 13) {
+					    form.action = goUrlXdmList;
+					    form.submit();
+				    }
+				}
+				
+		</script>
+		
+	</body>
+
+</html>

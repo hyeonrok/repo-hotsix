@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotsix.infra.member.MemberDao">
+<resultMap id="resultMapObj" type="com.hotsix.infra.member.MemberDto"></resultMap>
+	
+	<sql id ="selectCommon">
+       from 
+		member a
+	left join company b
+	on a.companySeqF = b.companySeq
+	WHERE 1=1
+<!--         <if test="shUseNy != null and !shUseNy.equals('')">AND ifcgUseNy = #{shUseNy}</if> -->
+        <if test="shDelny != null and !shDelny.equals('')">AND a.memberDelNy = #{shDelny}</if>
+       
+				<choose>
+					<when test="shOptionDate == 1">AND a.memberRegDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+					<when test="shOptionDate == 2">AND a.memberModDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+				</choose>
+    
+        <choose>
+            <when test="shOption == 1">AND a.memberSeq = #{shValue}</when>
+            <when test="shOption == 2">AND a.memberName LIKE CONCAT('%',#{shValue},'%')</when>
+            
+            
+<!--             <when test="shOption == 3">AND ifcgNameEng LIKE CONCAT('%',#{shValue},'%')</when> -->
+        </choose>
+       </sql>
+	
+	
+	
+	<select id="selectList" resultMap="resultMapObj">
+	select
+		a.memberSeq
+		,a.memberName
+		,a.memberId
+		,a.memberPwd
+		,a.genderCd
+		,a.phoneNumber
+		,a.memberTypeCd
+		,a.memberRegDate
+		,a.memberModDate
+		,a.memberDelNy
+		,b.companyName
+		,b.companySeq
+	<include refid="selectCommon" />         
+    limit #{rowNumToShow} offset #{startRnumForMysql}
+	
+	</select>
+	
+	<select id="selectOneCount" resultType="Integer">
+		SELECT COUNT(*)
+		<include refid="selectCommon" />
+	</select>
+	
+	<select id="memberList" resultMap="resultMapObj">
+	select
+		memberSeq
+		,memberName
+	from
+		member	
+	</select>
+	
+	<select id="selectLogin" resultMap="resultMapObj"> <!-- 애매 -->
+         select
+             memberId
+             ,memberPwd
+             ,memberName
+             ,memberSeq
+        from
+        	member
+        	where 1=1
+        	and memberId = #{memberId}
+     </select>
+	
+	
+	<select id="selectOne" resultMap="resultMapObj">
+	select
+		a.memberSeq
+		,a.memberName
+		,a.memberId
+		,a.memberPwd
+		,a.phoneNumber
+		,a.memberTypeCd
+		,b.companyName
+		,b.companySeq
+	from 
+		member a
+	left join company b
+	on a.companySeqF = b.companySeq
+	where
+		memberSeq = #{memberSeq}
+	</select>
+	
+	
+	<insert id="insert">
+		insert into member (
+		 	memberName
+            ,memberId
+            ,memberPwd
+            ,genderCd
+         	,phoneNumber
+            ,memberTypeCd
+         	,companySeqF
+		) values (
+		#{memberName}
+		,#{memberId}
+		,#{memberPwd}
+		,#{genderCd}
+		,#{phoneNumber}
+		,#{memberTypeCd}
+		,#{companySeqF}
+		)
+	</insert>
+	
+	
+	<update id="update">
+		update member a
+		left join company b
+		on b.companySeq = a.companySeqF
+		set
+			a.memberName = #{memberName}
+            ,a.memberId = #{memberId}
+            ,a.memberPwd = #{memberPwd}
+         	,a.phoneNumber = #{phoneNumber}
+         	,a.memberTypeCd = #{memberTypeCd}
+         	,a.companySeqF = #{companySeqF}
+    		where 1=1
+    		and a.memberSeq = #{memberSeq}
+	</update>
+	
+	<update id="uelete">
+		update member
+		set
+		memberDelNy = 1
+    		where 1=1
+    		and memberSeq = #{memberSeq}
+	</update>
+	
+	<delete id="delete">
+		delete from member
+		where 1 = 1
+			and memberSeq = #{memberSeq}
+	</delete>	
+
+</mapper>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotsix.infra.arrival.ArrivalDao">
+<resultMap id="resultMapObj" type="com.hotsix.infra.arrival.ArrivalDto"></resultMap>
+	
+	<sql id ="selectCommon">
+      FROM arrival a
+		LEFT JOIN placingOrder b on b.memberSeqF = a.poSeqF
+		LEFT JOIN poProduct c on c.poProductSeq = b.poSeq
+		LEFT JOIN product d on d.productSeq = a.productSeqF
+		LEFT JOIN member e on e.memberSeq = b.memberSeqF
+		LEFT JOIN company f on f.companySeq = d.companySeqF
+	Where 1=1 
+		<!--AND d.memberTypeCd = 8-->
+<!--         <if test="shUseNy != null and !shUseNy.equals('')">AND ifcgUseNy = #{shUseNy}</if> -->
+        <if test="shDelny != null and !shDelny.equals('')">AND a.arrivalDelNy = #{shDelny}</if>
+       
+				<choose>
+					<when test="shOptionDate == 1">AND a.arrivalRegDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+					<when test="shOptionDate == 2">AND a.arrivalModDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+				</choose>
+    
+        <choose>
+            <when test="shOption == 1">AND d.productName LIKE CONCAT('%',#{shValue},'%')</when>
+            <when test="shOption == 2">AND d.productPrice = #{shValue}</when>
+            <when test="shOption == 3">AND e.memberName LIKE CONCAT('%',#{shValue},'%')</when>
+            
+            
+<!--             <when test="shOption == 3">AND ifcgNameEng LIKE CONCAT('%',#{shValue},'%')</when> -->
+        </choose>
+       </sql>
+	
+	
+	
+	<select id="selectList" resultMap="resultMapObj">
+		SELECT
+			a.arrivalSeq
+			,a.arrivalRegDate
+			,a.arrivalModDate
+			,a.arrivalDelNy
+			,d.productName
+			,d.productTypeCd
+			,d.productPrice
+			,e.memberTypeCd
+			,e.memberName
+			,a.arrivalAccount
+			,f.companyName
+		<include refid="selectCommon" />         
+      limit #{rowNumToShow} offset #{startRnumForMysql}
+	</select>
+	
+	<select id="selectOneCount" resultType="Integer">
+		SELECT COUNT(*)
+		<include refid="selectCommon" />
+	</select>
+	
+	<select id="selectOne" resultMap="resultMapObj">
+		SELECT
+			a.arrivalSeq
+			,a.arrivalRegDate
+			,a.arrivalModDate
+			,a.arrivalDelNy
+			,d.productName
+			,d.productTypeCd
+			,d.productPrice
+			,e.memberTypeCd
+			,e.memberName
+			,a.arrivalAccount
+			,f.companyName
+		FROM arrival a
+		LEFT JOIN placingOrder b on b.memberSeqF = a.poSeqF
+		LEFT JOIN poProduct c on c.poProductSeq = b.poSeq
+		LEFT JOIN product d on d.productSeq = a.productSeqF
+		LEFT JOIN member e on e.memberSeq = b.memberSeqF
+		LEFT JOIN company f on f.companySeq = d.companySeqF
+		WHERE 1=1
+		AND a.arrivalSeq = #{arrivalSeq}
+	</select>
+	
+	<select id="placingOrderList" resultMap="resultMapObj">
+		SELECT
+			a.poProductSeq
+			,a.poAccount
+			,c.productName
+			,c.productPrice
+			,c.productTypeCd
+			,d.memberName
+			,d.memberTypeCd
+			,a.poProductDelNy
+            ,a.poProductRegDate
+            ,a.poProductModDate
+		FROM
+				poProduct a
+		LEFT JOIN placingOrder b 
+			on a.poSeqF = b.poSeq
+		LEFT JOIN product c 
+			on a.productSeqF = c.productSeq
+		LEFT JOIN member d 
+			on b.memberSeqF = d.memberSeq
+		WHERE 1=1 
+		 	
+	</select>
+	
+	
+	<select id="placingOrderOne" resultMap="resultMapObj">
+		SELECT
+			a.poProductSeq
+			,a.poAccount
+			,c.productName
+			,c.productPrice
+			,c.productTypeCd
+			,d.memberName
+			,d.memberTypeCd
+			,a.poProductDelNy
+            ,a.poProductRegDate
+            ,a.poProductModDate
+            ,a.productSeqF
+            ,b.memberSeqF
+		FROM
+				poProduct a
+		LEFT JOIN placingOrder b 
+			on a.poSeqF = b.poSeq
+		LEFT JOIN product c 
+			on a.productSeqF = c.productSeq
+		LEFT JOIN member d 
+			on b.memberSeqF = d.memberSeq
+		WHERE 1=1 
+		AND poProductSeq = #{poProductSeq}
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO arrival(
+			arrivalAccount
+			,productSeqF
+			,poSeqF
+		)VALUES(
+			#{arrivalAccount}
+			,#{productSeqF}
+			,#{memberSeqF}
+		)
+	</insert>
+	
+	<insert id="companyInsert">
+		INSERT INTO product(
+			companySeqF
+		)VALUES(
+			#{companySeqF}
+		)
+		
+	</insert>
+	
+	<update id="update">
+		UPDATE arrival a
+		LEFT JOIN product b on b.productSeq = a.productSeqF
+		SET
+		 	a.arrivalAccount = #{arrivalAccount}
+		 	,b.productName = #{productName}
+		 	,b.productPrice = #{productPrice}
+		 WHERE a.arrivalSeq = #{arrivalSeq}	
+	</update>
+	
+	<delete id="delete">
+    	DELETE FROM  arrival
+    	WHERE  1=1
+    		AND arrivalSeq = #{arrivalSeq}
+    </delete>
+	
+	<update id="uelete">
+		UPDATE arrival
+    	set
+    	arrivalDelNy = 1
+    	WHERE 1=1 
+    		AND	arrivalSeq = #{arrivalSeq}
+	</update>
+	
+</mapper>

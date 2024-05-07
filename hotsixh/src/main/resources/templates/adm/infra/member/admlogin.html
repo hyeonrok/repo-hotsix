@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<div th:replace="~{adm/infra/include/loginhead :: loginhead}"></div>
+	</head>
+
+	<body class="login-container">
+		<!-- Login box start -->
+		<div class="container">
+			<form method="post" class="row g-3">
+				<div class="login-box rounded-2 p-5">
+					<div class="login-form">
+						<a href="index.html" class="login-logo mb-3">
+							<img src="/adm/template/gear/assets/images/logo.svg" alt="Best Admin Dashboards" />
+						</a>
+						<h5 class="fw-light mb-5">로그인</h5>
+						<div class="mb-3">
+							<label  for="validationID" class="form-label">관리자ID</label>
+							<input type="text" class="form-control" id="memberId" name="memberId" placeholder="ID를 입력하세요" value="aaaa" required/>
+							<div class="invalid-feedback">
+								ID를 입력하세요
+							</div>
+						</div>
+						<div class="mb-3">
+							<label for="validationPassword" class="form-label">비밀번호</label>
+							<input type="password" class="form-control" id="memberPwd" name="memberPwd" placeholder="비밀번호를 입력하세요" value="1234" required/>
+							<div class="invalid-feedback">
+								비밀번호를 입력하세요
+							</div>
+						</div>
+						<!--<div class="d-flex align-items-center justify-content-between">
+							<div class="form-check m-0">
+								<input class="form-check-input" type="checkbox" value="" id="rememberPassword" />
+								<label class="form-check-label" for="rememberPassword">비밀번호 저장</label>
+							</div>
+							<a href="forgot-password.html" class="text-blue text-decoration-underline">비밀번호 찾기</a>
+						</div>-->
+						<div class="d-grid py-3">
+							<button type="button" class="btn btn-lg btn-primary" id="buttonSignIn" name="buttonSignIn">
+								로그인
+							</button>
+						</div>
+						<!--<div class="text-center py-3">or login with</div>
+						<div class="d-flex gap-2 justify-content-center">
+							<button type="submit" class="btn btn-outline-light">
+								<img src="/adm/template/gear/assets/images/google.svg" class="login-icon" alt="Login with Google" />
+							</button>
+							<button type="submit" class="btn btn-outline-light">
+								<img src="/adm/template/gear/assets/images/facebook.svg" class="login-icon" alt="Login with Facebook" />
+							</button>
+						</div>
+						<div class="text-center pt-3">
+							<span>Not registered?</span>
+							<a href="signup.html" class="text-blue text-decoration-underline ms-2">
+								회원가입</a>
+						</div>-->
+					</div>
+				</div>
+			</form>
+		</div>
+		<!-- Login box end -->
+
+		<!-- Main Js Required -->
+		<script src="/adm/template/gear/assets/js/jquery.min.js"></script>
+<!-- 		<script src="/adm/template/gear/assets/js/main.js"></script> -->
+		<script src="/adm/template/gear/assets/js/validations.js"></script>
+		
+		<script type="text/javascript">
+			
+		document.getElementById("buttonSignIn").onclick = function () {
+// 			alert("asdasdasd");
+// 			if(validation() == false) return false;
+// 			alert("확인");
+		
+			$.ajax({
+				async: true 
+				,cache: false
+				,type: "post"
+				/* ,dataType:"json" */
+				,url: "/signinAdm"
+				/* ,data : $("#formLogin").serialize() */
+				,data : { "memberId" : $("#memberId").val(), "memberPwd" : $("#memberPwd").val()}
+				,success: function(response) {
+					if(response.rt == "success") {
+// 						alert("sqqqqqqqq");
+						location.href = "/admindex";
+
+					} else if (response.rt == "passfail"){
+						alert("비밀번호가 일치하지 않습니다.");
+					
+					} else if (response.rt == "notId"){
+						alert("아이디가 일치하지 않습니다.");
+					}
+				}
+				,error : function(jqXHR, textStatus, errorThrown){
+					alert("ajaxUpdate " + jqXHR.textStatus + " : " + jqXHR.errorThrown);
+				}
+			});
+		}
+		
+		</script>
+	</body>
+
+</html>

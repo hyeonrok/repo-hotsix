@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotsix.infra.placingorder.PlacingOrderDao">
+<resultMap id="resultMapObj" type="com.hotsix.infra.placingorder.PlacingOrderDto"></resultMap>
+	
+	<sql id ="selectCommon">
+        FROM
+				poProduct a
+		LEFT JOIN placingOrder b 
+			on a.poSeqF = b.poSeq
+		LEFT JOIN product c 
+			on a.productSeqF = c.productSeq
+		LEFT JOIN member d 
+			on b.memberSeqF = d.memberSeq
+        WHERE 1=1
+<!--         <if test="shUseNy != null and !shUseNy.equals('')">AND ifcgUseNy = #{shUseNy}</if> -->
+        <if test="shDelny != null and !shDelny.equals('')">AND a.poProductDelNy = #{shDelny}</if>
+       
+				<choose>
+					<when test="shOptionDate == 1">AND a.poProductRegDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+					<when test="shOptionDate == 2">AND a.poProductModDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+				</choose>
+    
+        <choose>
+            <when test="shOption == 1">AND a.poProductSeq = #{shValue}</when>
+            <when test="shOption == 2">AND d.memberName = #{shValue}</when>
+            <when test="shOption == 3">AND c.productName LIKE CONCAT('%',#{shValue},'%')</when>
+            
+            
+<!--             <when test="shOption == 3">AND ifcgNameEng LIKE CONCAT('%',#{shValue},'%')</when> -->
+        </choose>
+       </sql>
+	
+	
+	
+	<select id="selectList" resultMap="resultMapObj">
+		 SELECT
+			a.poProductSeq
+			,a.poAccount
+			,c.productName
+			,c.productPrice
+			,c.productTypeCd
+			,d.memberName
+			,d.memberTypeCd
+			,a.poProductDelNy
+            ,a.poProductRegDate
+            ,a.poProductModDate
+		
+			<include refid="selectCommon" />         
+    		limit #{rowNumToShow} offset #{startRnumForMysql}
+		
+	</select>
+	
+	<select id="selectOneCount" resultType="Integer">
+		SELECT COUNT(*)
+		<include refid="selectCommon" />
+	</select>
+	
+	<select id="selectOne" resultMap="resultMapObj">
+	SELECT
+			a.poProductSeq
+			,a.poAccount
+			,c.productName
+			,c.productPrice
+			,c.productTypeCd
+			,d.memberName
+			,d.memberTypeCd
+			,a.poProductDelNy
+            ,a.poProductRegDate
+            ,a.poProductModDate
+		FROM
+				poProduct a
+		LEFT JOIN placingOrder b 
+			on a.poSeqF = b.poSeq
+		LEFT JOIN product c 
+			on a.productSeqF = c.productSeq
+		LEFT JOIN member d 
+			on b.memberSeqF = d.memberSeq
+		WHERE 
+		 	poProductSeq = #{poProductSeq}
+	</select>
+	
+	
+	<insert id="insert">
+		insert into poProduct(
+			poAccount
+			,productSeqF
+			,poSeqF
+		)values(
+			#{poAccount}
+			,#{productSeqF}
+			,#{memberSeqF}
+		)
+	</insert>
+	
+<!-- 	<insert id="placingInsert"> -->
+<!-- 		insert into placingOrder( -->
+<!-- 			memberSeqF -->
+<!-- 		)values( -->
+<!-- 			#{memberSeqF} -->
+<!-- 		) -->
+<!-- 	</insert> -->
+
+	<update id="update">
+		UPDATE poProduct a 
+		LEFT JOIN placingOrder b on a.poSeqF = b.poSeq
+		LEFT JOIN product c on a.productSeqF = c.productSeq
+		SET
+		a.poAccount = #{poAccount}
+		,c.productName = #{productName}
+		,c.productPrice = #{productPrice}
+		WHERE
+			a.poProductSeq= #{poProductSeq}
+	</update>
+	
+	<delete id="delete">
+    	DELETE FROM  poProduct
+    	WHERE poProductSeq = #{poProductSeq}
+    </delete>
+	
+	<update id="uelete">
+		UPDATE poProduct
+    	set
+    	poProductDelNy = 1
+    	WHERE poProductSeq = #{poProductSeq}
+	</update>
+	
+	
+	
+</mapper>

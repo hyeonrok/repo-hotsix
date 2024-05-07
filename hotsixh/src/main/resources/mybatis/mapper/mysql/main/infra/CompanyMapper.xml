@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotsix.infra.company.CompanyDao">
+<resultMap id="resultMapObj" type="com.hotsix.infra.company.CompanyDto"></resultMap>
+	
+	<select id="selectList" resultMap="resultMapObj">
+		SELECT
+			companySeq
+			,companyName
+			,companyNumber
+			,companyRegDate
+			,companyModDate
+			,companyDelNy
+		FROM
+			company 
+		
+	</select>
+	
+	<select id="selectOne" resultMap="resultMapObj">
+		SELECT
+			companySeq
+			,companyName
+			,companyNumber
+			,companyRegDate
+			,companyModDate
+			,companyDelNy
+		FROM
+			company
+		WHERE companySeq = #{companySeq}
+	
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO arrival(
+			arrivalAccount
+			,productSeqF
+			,poSeqF
+		)VALUES(
+			#{arrivalAccount}
+			,#{productSeqF}
+			,#{companySeqF}		
+		)
+	</insert>
+	
+	
+	
+	<update id="update">
+		UPDATE 
+	</update>
+	
+	<update id="uelete">
+	
+	</update>
+	
+	<delete id="delete">
+	
+	
+	</delete>
+</mapper>

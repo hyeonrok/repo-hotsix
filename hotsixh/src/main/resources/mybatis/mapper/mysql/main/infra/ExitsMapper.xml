@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotsix.infra.exits.ExitsDao">
+<resultMap id="resultMapObj" type="com.hotsix.infra.exits.ExitsDto"></resultMap>
+
+	<sql id ="selectCommon">
+      FROM exits a
+        LEFT JOIN orders b ON b.orderSeq = a.orderSeqF
+        LEFT JOIN orderProduct c ON c.orderSeqF = b.orderSeq
+        LEFT JOIN product d ON d.productSeq = c.productSeqF
+        LEFT JOIN member e ON e.memberSeq = b.memberSeqF
+	WHERE 1=1
+<!--         <if test="shUseNy != null and !shUseNy.equals('')">AND ifcgUseNy = #{shUseNy}</if> -->
+        <if test="shDelny != null and !shDelny.equals('')">AND a.exitsDelNy = #{shDelny}</if>
+       
+				<choose>
+					<when test="shOptionDate == 1">AND a.exitsRegDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+					<when test="shOptionDate == 2">AND a.exitsModDate BETWEEN #{shDateStart} AND #{shDateEnd}</when>
+				</choose>
+    
+        <choose>
+            <when test="shOption == 1">AND a.exitsSeq = #{shValue}</when>
+            <when test="shOption == 2">AND d.productName LIKE CONCAT('%',#{shValue},'%')</when>
+            
+            
+<!--             <when test="shOption == 3">AND ifcgNameEng LIKE CONCAT('%',#{shValue},'%')</when> -->
+        </choose>
+       </sql>
+	
+	<select id="selectList" resultMap="resultMapObj">
+	SELECT 
+			a.exitsSeq
+			,a.exitsDelNy
+			,b.orderSeq
+			, a.exitsRegDate
+			, a.exitsModDate
+			, c.orderProductSeq
+			, a.exitsAccount
+			, d.productName
+			, d.productPrice
+			, d.productTypeCd
+			, e.memberTypeCd
+			, e.memberName
+			, a.deliverName
+			, a.delivaryNumber
+			, a.delivaryNameCd
+			, a.delivaryStatusCd
+			,a.orderSeqF
+        
+        <include refid="selectCommon" />         
+    	limit #{rowNumToShow} offset #{startRnumForMysql}
+        
+	</select>
+	
+	<select id="selectOneCount" resultType="Integer">
+		SELECT COUNT(*)
+		<include refid="selectCommon" />
+	</select>
+	
+	<select id="selectOne" resultMap="resultMapObj">
+		SELECT 
+			a.exitsSeq
+			,b.orderSeq
+			, a.exitsRegDate
+			, a.exitsModDate
+			, c.orderProductSeq
+			, a.exitsAccount
+			, d.productName
+			, d.productPrice
+			, d.productTypeCd
+			, e.memberTypeCd
+			, e.memberName
+			, a.deliverName
+			, a.delivaryNumber
+			, a.delivaryNameCd
+			, a.delivaryStatusCd
+			,a.orderSeqF
+        FROM exits a
+        LEFT JOIN orders b ON b.orderSeq = a.orderSeqF
+        LEFT JOIN orderProduct c ON c.orderSeqF = b.orderSeq
+        LEFT JOIN product d ON d.productSeq = c.productSeqF
+        LEFT JOIN member e ON e.memberSeq = b.memberSeqF
+        WHERE 1=1
+        	AND a.exitsSeq = #{exitsSeq}
+	</select>
+	
+	<select id="selectOrder" resultMap="resultMapObj">
+		select
+			 a.orderSeq
+			, a.orderRegDate
+			, a.orderModDate
+			, b.orderProductSeq
+			, b.orderAccount
+			, c.productName
+			, c.productPrice
+			, c.productTypeCd
+			, d.memberTypeCd
+			, d.memberName
+			 from
+			orders a
+	    left join orderProduct b on b.productSeqF = a.orderSeq
+	    left join product c on c.productSeq = b.productSeqF
+	    left join member d on d.memberSeq = b.orderSeqF
+		Where 1=1 
+	</select>
+	
+
+
+		<insert id="insert">
+			INSERT INTO exits(
+				orderSeqF
+				,delivaryNameCd
+				,deliverName
+				,delivaryNumber
+				,productSeqF
+				,exitsAccount
+				,delivaryStatusCd
+			)VALUES(
+				#{orderSeqF}
+				,#{delivaryNameCd}
+				,#{deliverName}
+				,#{delivaryNumber}
+				,#{productSeqF}
+				,#{exitsAccount}
+				,#{delivaryStatusCd}
+			)
+		</insert>
+		
+
+	<update id="update">
+		UPDATE exits a
+		LEFT JOIN product b ON a.productSeqF = b.productSeq
+		SET 
+			a.exitsAccount = #{exitsAccount}
+			,a.delivaryStatusCd = #{delivaryStatusCd}
+			,b.productName = #{productName}
+			,b.productPrice = #{productPrice}
+		WHERE 1=1
+			AND a.exitsSeq = #{exitsSeq}
+			
+	</update>
+	
+	<update id="uelete">
+		UPDATE exits
+    	set
+    	exitsDelNy = 1
+    	WHERE 1=1 
+    		AND	exitsSeq = #{exitsSeq}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM  exits
+    	WHERE  1=1
+    		AND exitsSeq = #{exitsSeq}
+	</delete>	
+	
+
+</mapper>
