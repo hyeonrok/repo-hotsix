@@ -12,8 +12,8 @@ env:
   PROJECT_NAME: coffee
   AWS_REGION: ap-northeast-2
   S3_BUCKET: hr-cicd
-  CODE_DEPLOY_APPLICATION_NAME: hr-jlook
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: hr-jlook-prdt
+  CODE_DEPLOY_APPLICATION_NAME: hs-hotsix
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: hs-hotsix-prdt
 
 permissions:
   contents: read
