@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # stop.sh
 
-PROJECT_NAME="hotsix-0.0.1"
+PROJECT_NAME="hotsixh-0.0.1"
 PROJECT_FULL_PATH_01="/home/ec2-user/service/hotsix-prdt-01"
 JAR_FILE="$PROJECT_FULL_PATH_01/$PROJECT_NAME.jar"
 LOG_PATH="$PROJECT_FULL_PATH_01/logs"
