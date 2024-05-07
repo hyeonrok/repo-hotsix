@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 
 @Configuration
 //@MapperScan(basePackages={"com.hotsix.*","com.opengroupfw.fapp.*"}		//#-->	*dao 찾는 영역
-@MapperScan(basePackages="com.hotsix.*"									//#-->	*dao 찾는 영역 (한개일때)
+@MapperScan(basePackages="com.hotsih.*"									//#-->	*dao 찾는 영역 (한개일때)
         ,sqlSessionFactoryRef="sqlSessionFactoryMysqlMain")             		//#-->
 @EnableTransactionManagement
 public class DbConfigMysqlMain {                                        //#-->
