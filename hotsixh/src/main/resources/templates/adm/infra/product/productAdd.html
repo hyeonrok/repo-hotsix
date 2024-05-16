@@ -71,10 +71,6 @@
 										</div>
 									<form method="post" action='/productInsert' class="needs-validation" novalidate>
 										<div class="row">
-											<div class="col-lg-6 col-sm-4 col-12 gy-2">
-													<label class="form-label">멤버Seq</label>
-													<input type="text" name="memberSeqF" id="memberSeqF" class="form-control">
-												</div>
 												<div class="col-lg-6 col-sm-4 col-12 gy-2">
 													<label class="form-label">상품이름</label>
 													<input type="text" name="productName" id="productName" class="form-control">
@@ -100,7 +96,8 @@
 												<div class="col-lg-6 col-sm-4 col-12 gy-2">
 													<label class="form-label">회사이름</label>
 													<select id="companySeqF" name="companySeqF" class="form-select">
-														<option th:if="${#lists.isEmpty(List)}" th:each="list : ${list}" th:text="${list.companyName}" th:value="${list.companySeq}"></option>
+														<option value="">선택하세요</option>
+ 														<option th:if="${#lists.isEmpty(List)}" th:each="list : ${list}" th:text="${list.companyName}" th:value="${list.companySeq}"></option>
 													</select>
 												</div>
 												<div id="memerName" class="col-lg-6 col-sm-4 col-12 gy-2">
