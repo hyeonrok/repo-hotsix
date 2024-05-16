@@ -259,9 +259,7 @@
             // , "autoLogin" : $("#autoLogin").is(":checked")
             
             ,success: function(response) {
-				alert("1");
                 if(response.rt == "success") {
-						alert("2");						
                     $("#selectOrder").html(
 							 '	<label class="form-label">주문자</label>' 
 	                        +    '	<input type="hidden" name="orderSeqF" id="orderSeqF" value="' + response.itemOd.orderSeqF + '"  class="form-control" />' 

@@ -76,7 +76,7 @@ public class ArrivalController {
 		
 		
 		
-		return "/adm/infra/arrival/arrivalXdmList";
+		return "adm/infra/arrival/arrivalXdmList";
 	}
 	
 	@RequestMapping(value="arrivalForm")
@@ -84,7 +84,7 @@ public class ArrivalController {
 		
 		model.addAttribute("item", service.selectOne(dto));
 		
-		return "/adm/infra/arrival/arrivalForm";
+		return "adm/infra/arrival/arrivalForm";
 	}
 	
 	@RequestMapping(value="arrivalAdd")
@@ -96,7 +96,7 @@ public class ArrivalController {
 		model.addAttribute("polist",service.placingOrderList(dto));
 		
 		
-		return "/adm/infra/arrival/arrivalAdd";
+		return "adm/infra/arrival/arrivalAdd";
 	}
 	
 	@ResponseBody
